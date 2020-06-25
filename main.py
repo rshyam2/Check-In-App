@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter.messagebox as tkm
 import json
+import os
 
 root = Tk()
 root.title("CheckIn")
@@ -64,7 +65,9 @@ class SaveInfo():
         pass
     def submitted(self):
         tkm.showinfo('Notice', 'Your Entry was Saved!')
-        log = open('check_log.txt', 'a')
+        current_dir = os.getcwd()
+        full_path = current_dir + "check_log.txt"
+        log = open(full_path, 'a')
         self.info = {'Name': nm_entry.get(), 'Visiting': who_entry.get(), 'Purpose': pur_entry.get(),
                 'Temp': temp_entry.get(), 'Phone': ph_entry.get(), 'Questions': {'1': q1.get(),
                                                                                  '2': q2.get(),
