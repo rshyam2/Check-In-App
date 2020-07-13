@@ -89,9 +89,9 @@ class CheckinApp:
         
         port = 465  # For SSL
         smtp_server = "smtp.gmail.com"
-        sender_email = "sender@gmail.com"  # Enter your address
+        sender_email = "sender@gmail.com"  # Enter sender address
         receiver_email = "recipient@gmail.com"  # Enter receiver address
-        password = "password"
+        password = "password" #Enter sender password
         
         for key,value in info.items():
             string += (str(key) + ": " + str(value) + "\n")
