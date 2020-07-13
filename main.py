@@ -3,12 +3,13 @@ import tkinter.messagebox as tkm
 import json
 import os
 import smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # frames
 class CheckinApp:
     def __init__(self, master):
         self.submitted
-        self.sendemail
         frame1 = Frame(master)
         frame1.pack(padx=2, pady=2)
         frame2 = Frame(master)
@@ -62,21 +63,10 @@ class CheckinApp:
         q3b_box = Checkbutton(frame2, text="No")
         q3b_box.grid(column=3, row=2)
         
-        mybutton = Button(frame3, text="Submit!", command=lambda:[self.sendemail(), self.submitted()])
+        mybutton = Button(frame3, text="Submit!", command=lambda:[self.submitted()])
         mybutton.grid(column=1, row=2)  
         
     def submitted(self):
-        tkm.showinfo('Notice', 'Your Entry was Saved!')
-        full_path = "./check_log.txt"
-        log = open(full_path, 'a+')
-        info = {'Name': self.nm_entry.get(), 'Visiting': self.who_entry.get(), 'Purpose': self.pur_entry.get(),
-                'Temp': self.temp_entry.get(), 'Phone': self.ph_entry.get(), 'Questions': {'1': self.q1.get(),
-                                                                                         '2': self.q2.get(),
-                                                                                         '3': self.q3.get()}}
-        log.write(json.dumps(info))
-        log.write("\n")
-        log.close()
-    def sendemail(self):
         name = self.nm_entry.get()
         resident = self.who_entry.get()
         why = self.pur_entry.get()
@@ -85,17 +75,39 @@ class CheckinApp:
         question1 = self.q1.get()
         question2 = self.q2.get()
         question3 = self.q3.get()
+        
+        full_path = "./check_log.txt"
+        log = open(full_path, 'a+')
+        info = {'Name': name, 'Visiting': resident, 'Purpose': why,
+                'Temp': temp, 'Phone': phone, 'Questions': {'1': question1,
+                                                            '2': question2,
+                                                            '3': question3}}
+        log.write(json.dumps(info))
+        log.write("\n")
+        log.close()
+        tkm.showinfo('Notice', 'Your Entry was Saved!')
+        
         port = 465  # For SSL
         smtp_server = "smtp.gmail.com"
-        sender_email = "hermescheckin@gmail.com"  # Enter your address
-        receiver_email = "rshyampokhrel@gmail.com"  # Enter receiver address
-        password = "admin108"
-        message = ()
+        sender_email = "sender@gmail.com"  # Enter your address
+        receiver_email = "recipient@gmail.com"  # Enter receiver address
+        password = "password"
+        
+        for key,value in info.items():
+            string += (str(key) + ": " + str(value) + "\n")
+            
+        msg = MIMEMultipart('alternative')
+        msg['Subject'] = 'Check-In'
+        part1 = MIMEText(string, 'plain')
+        msg.attach(part1)
+        
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
             server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, message)
-           
+            server.sendmail(sender_email, receiver_email, msg.as_string())
+            
+        tkm.showinfo('Notice', 'Email Sent!')    
+         
 root = Tk()
 root.title("CheckIn")
 App = CheckinApp(root)
