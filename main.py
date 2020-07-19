@@ -5,7 +5,6 @@ import os
 import smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
 # frames
 class CheckinApp:
     def __init__(self, master):
@@ -15,7 +14,9 @@ class CheckinApp:
         frame2 = Frame(master)
         frame2.pack(padx=2, pady=2)
         frame3 = Frame(master)
-        frame3.pack(padx=2, pady=(2, 20)) 
+        frame3.pack(padx=2, pady=2)
+        frame4 = Frame(master)
+        frame4.pack(padx=2, pady=(2, 10))
         # Texts
         nm_txt = Label(frame1, text="Please enter your Name:", font="Bold").grid(column=0, row=1, padx=5, pady=2)
         who_txt = Label(frame1, text="Resident Visiting", font="Bold").grid(column=4, row=1, padx=5, pady=2)
@@ -63,9 +64,26 @@ class CheckinApp:
         q3b_box = Checkbutton(frame2, text="No")
         q3b_box.grid(column=3, row=2)
         
-        mybutton = Button(frame3, text="Submit!", command=lambda:[self.submitted()])
-        mybutton.grid(column=1, row=2)  
+        submit = Button(frame3, text="Submit Entry!", command=lambda:[self.submitted(), self.clear_entry()])
+        submit.grid(column=1, row=2, pady=5, padx=5)
+        s_email = StringVar()
+        s_pass = StringVar()
+        r_email = StringVar()
+        sender_addy = Label(frame4, text="Sender Email").grid(column=0, row=0, pady=5, padx=5, sticky=W)
+        sender_pass = Label(frame4, text="Sender password").grid(column=0, row=1, pady=5, padx=5, sticky=W)
+        receiver_addy = Label(frame4, text='Receiver Email').grid(column=0, row=2, pady=5, padx=5, sticky=W)
         
+        self.SenderEmail = Entry(frame4, textvariable=s_email, width=30)
+        self.SenderEmail.grid(column=1, columnspan=3, row=0, pady=5, padx=5)
+        self.SenderPass = Entry(frame4, textvariable=s_pass, width=15)
+        self.SenderPass.grid(column=1, columnspan=2, row=1, pady=5, padx=5, sticky=W)
+        self.ReceiverEmail = Entry(frame4, textvariable=r_email, width=30)
+        self.ReceiverEmail.grid(column=1, columnspan=3, row=2, pady=5, padx=5, sticky=W)
+    def clear_entry(self):
+        entries = [self.nm_entry, self.who_entry, self.who_entry, self.pur_entry]
+        for entry in entries:
+            entry.delete(0, END)
+                
     def submitted(self):
         name = self.nm_entry.get()
         resident = self.who_entry.get()
@@ -75,24 +93,21 @@ class CheckinApp:
         question1 = self.q1.get()
         question2 = self.q2.get()
         question3 = self.q3.get()
-        
-        full_path = "./check_log.txt"
-        log = open(full_path, 'a+')
         info = {'Name': name, 'Visiting': resident, 'Purpose': why,
-                'Temp': temp, 'Phone': phone, 'Questions': {'1': question1,
-                                                            '2': question2,
-                                                            '3': question3}}
-        log.write(json.dumps(info))
-        log.write("\n")
-        log.close()
-        tkm.showinfo('Notice', 'Your Entry was Saved!')
+                'Temp': temp, 'Phone': phone, 'Questions': {'Travel': question1,
+                                                            'Symptoms': question2,
+                                                            'Contact': question3}}
+        sender = self.SenderEmail.get()
+        sender_pass = self.SenderPass.get()
+        receiver = self.ReceiverEmail.get()
         
         port = 465  # For SSL
         smtp_server = "smtp.gmail.com"
-        sender_email = "sender@gmail.com"  # Enter sender address
-        receiver_email = "recipient@gmail.com"  # Enter receiver address
-        password = "password" #Enter sender password
+        sender_email = sender 
+        receiver_email = receiver
+        password = sender_pass 
         
+        string = ''
         for key,value in info.items():
             string += (str(key) + ": " + str(value) + "\n")
             
@@ -105,7 +120,13 @@ class CheckinApp:
         with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
             server.login(sender_email, password)
             server.sendmail(sender_email, receiver_email, msg.as_string())
-            
+           
+        full_path = "./check_log.txt"
+        log = open(full_path, 'a+')
+        log.write(json.dumps(info))
+        log.write("\n")
+        log.close()
+                   
         tkm.showinfo('Notice', 'Email Sent!')    
          
 root = Tk()
