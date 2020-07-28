@@ -1,2 +1,2 @@
 # CheckInApp
-A simple GUI in python using tkinter to enter the info of visitors into a retirement complex. The data is then sent to a specified email while being logged into a txt file that can be referred to in case of a crash or an error. 
+A simple GUI in python using tkinter to enter the info of visitors into a retirement complex. The data is then sent to a .csv file, which can then be further used for data scraping or just as display, all the data is shown there nicely. In an event that someone, a manager or such, must be notified, the email feature serves that purpose too. Also has a look-up feature to find people that have already been enterd into the database, so their info can be autofilled.
