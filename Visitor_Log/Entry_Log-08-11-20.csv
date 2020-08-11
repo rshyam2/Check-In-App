@@ -1,0 +1,6 @@
+Time,Date,Name,Visiting,Purpose,Temp,Phone #,Travel,Symptoms,Contact,Screener
+00:00,08/11,Elton John,Employee,-,96.5,564-9867,False,False,False,Mike
+00:06,08/11,Alpha Beta ,Gamma Omega,None,87.9,987-5768,True,False,False,Tanni
+00:11,08/11,Alpha Beta ,Gamma Omega,None,87.9,987-5768,False,False,False,Rashid
+09:22,08/11,Eva Tally,MGS453,Caregiver,98.4,354-4938,False,False,False,Mikey
+12:28,08/11,Eva Tally,MGS453,Caregiver,98.0,354-4938,False,True,False,Radhe
